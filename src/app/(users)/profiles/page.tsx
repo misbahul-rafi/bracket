@@ -3,7 +3,7 @@ import { FaUserAlt } from "react-icons/fa";
 import { signOut, useSession } from "next-auth/react";
 
 export default function Page() {
-  const { data, status } = useSession()
+  const { data } = useSession()
   if (!data) return "Loading"
   const handleLogout = () => {
     signOut({ callbackUrl: '/' });

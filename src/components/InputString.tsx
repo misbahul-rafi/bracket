@@ -18,7 +18,6 @@ export default function InputString({
   placeholder,
   value,
   onChange,
-  ...rest
 }: Props) {
   return (
     <div className='flex-1'>

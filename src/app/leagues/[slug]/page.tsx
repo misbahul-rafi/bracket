@@ -5,7 +5,6 @@ import { useEffect, useState } from "react";
 import { LeagueStruct } from "../../../../types/struct";
 import ViewLeaderboard from "./_components/ViewLeaderboard";
 import ViewMatch from "./_components/ViewMatch";
-import ModalCheckReturn from "@/components/ModalCheckReturn";
 import { getChangedMatches } from "@/utils/getChangedMatch";
 import { useSession } from "next-auth/react";
 
@@ -15,7 +14,6 @@ export default function LeaguePage() {
   const [originalLeague, setOriginalLeague] = useState<LeagueStruct | null>(null);
   const [league, setLeague] = useState<LeagueStruct | null>(null);
   const [loading, setLoading] = useState(true);
-  const [dataReturn, setDataReturn] = useState<any>(null)
 
   const fetching = async () => {
     setLoading(true);
@@ -68,9 +66,6 @@ export default function LeaguePage() {
         console.error('Save failed:', err.error || 'Unknown error');
         return;
       }
-
-      const data = await res.json();
-      setDataReturn(data);
       fetching();
     } catch (err) {
       console.error('Save error:', err);
@@ -79,7 +74,6 @@ export default function LeaguePage() {
 
   return (
     <main className="min-h-screen p-6 bg-gray-50 text-gray-800">
-      {dataReturn && <ModalCheckReturn data={dataReturn} onClose={() => setDataReturn(null)} />}
       <header className="text-center mb-8">
         <h1 className="text-4xl font-bold text-[#ff0000]">{league.name}</h1>
         <h2 className="text-lg text-gray-500 uppercase tracking-widest">{league.code}</h2>
@@ -112,7 +106,7 @@ export default function LeaguePage() {
 
       <section className="max-w-6xl mx-auto mt-10 bg-white rounded-xl shadow-md p-6">
         <h2 className="text-2xl font-semibold mb-4 text-[#ff0000]">Matches</h2>
-        <ViewMatch data={league.matches} onReset={reset} onScoreChange={handleScoreChange} />
+        <ViewMatch data={league.matches} onScoreChange={handleScoreChange} />
       </section>
     </main>
   );

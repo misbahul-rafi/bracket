@@ -7,10 +7,10 @@ import MatchCard from "./MatchCard";
 type Props = {
   data: MatchStruct[],
   onScoreChange: (id: number, homeScore: number, awayScore: number) => void;
-  onReset: () => void;
+  // onReset: () => void;
 }
 
-export default function ViewMatch({ data, onScoreChange, onReset }: Props) {
+export default function ViewMatch({ data, onScoreChange }: Props) {
   if (!data) return
 
   const { pastWeeks, upcomingWeeks } = weeklyGroup(data)

@@ -13,6 +13,7 @@ export default function SelectGame({ onSelect }: SelectGameProps) {
   const [selectedGame, setSelectedGame] = useState<Game | null>(null);
   const [isFocused, setIsFocused] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+  console.log(selectedGame)
 
   useEffect(() => {
     async function fetchGames() {
@@ -54,6 +55,7 @@ export default function SelectGame({ onSelect }: SelectGameProps) {
         onChange={(e) => {
           setQuery(e.target.value);
           setSelectedGame(null);
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           onSelect(null as any);
         }}
         className="block w-full p-2 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 text-xs focus:ring-blue-500 focus:border-blue-500 mb-5"

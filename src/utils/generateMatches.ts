@@ -1,17 +1,8 @@
 import { LeagueStruct, MatchStruct, ScheduleStruct } from "../../types/struct";
 
 function getNextValidDate(start: Date, allowedDays: string[]): Date {
-  const dayMap = {
-    Sunday: 0,
-    Monday: 1,
-    Tuesday: 2,
-    Wednesday: 3,
-    Thursday: 4,
-    Friday: 5,
-    Saturday: 6,
-  };
-
-  let date = new Date(start);
+  // @typescript-eslint/no-unused-vars
+  const date = new Date(start);
   while (true) {
     const dayName = date.toLocaleDateString("en-US", { weekday: "long" });
     if (allowedDays.includes(dayName)) break;

@@ -10,6 +10,7 @@ interface Props {
 }
 export default function CardLeague({ title, desc, logoLink, slug }: Props) {
   const router = useRouter()
+  console.log(logoLink)
 
 
   return (

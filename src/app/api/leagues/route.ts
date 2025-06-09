@@ -4,7 +4,7 @@ import slugify from "@/utils/slugify";
 import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     const league = await prisma.league.findMany({
       include: { game: true }

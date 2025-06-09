@@ -44,35 +44,50 @@ export default function NewLeaguePage() {
     e.preventDefault();
     setLoading(true)
     const newErrors: Record<string, string> = {};
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const payload: Record<string, any> = {};
+    if (!data.name.trim()) {
+      newErrors.name = "Name is required";
+    } else {
+      payload.name = data.name;
+    }
 
-    !data.name.trim()
-      ? (newErrors.name = "Name is required")
-      : (payload.name = data.name);
+    if (!data.code.trim()) {
+      newErrors.code = "Code is required";
+    } else {
+      payload.code = data.code;
+    }
 
-    !data.code.trim()
-      ? (newErrors.code = "Code is required")
-      : (payload.code = data.code);
+    if (!data.season || data.season <= 0) {
+      newErrors.season = "Season must be greater than 0";
+    } else {
+      payload.season = data.season;
+    }
 
-    !data.season || data.season <= 0
-      ? (newErrors.season = "Season must be greater than 0")
-      : (payload.season = data.season);
+    if (!data.region.trim()) {
+      newErrors.region = "Region is required";
+    } else {
+      payload.region = data.region;
+    }
 
-    !data.region.trim()
-      ? (newErrors.region = "Region is required")
-      : (payload.region = data.region);
+    if (!data.selectedGame) {
+      newErrors.selectedGame = "Game must be selected";
+    } else {
+      payload.gameId = data.selectedGame.id;
+    }
 
-    !data.selectedGame
-      ? (newErrors.selectedGame = "Game must be selected")
-      : (payload.gameId = data.selectedGame.id);
+    if (!data.formatLeague) {
+      newErrors.formatLeague = "Format League must be selected";
+    } else {
+      payload.format = data.formatLeague;
+    }
 
-    !data.formatLeague
-      ? (newErrors.formatLeague = "Format League must be selected")
-      : (payload.format = data.formatLeague);
+    if (!data.formatMatch) {
+      newErrors.formatMatch = "Format Match must be selected";
+    } else {
+      payload.groupMatchFormat = data.formatMatch;
+    }
 
-    !data.formatMatch
-      ? (newErrors.formatMatch = "Format Match must be selected")
-      : (payload.groupMatchFormat = data.formatMatch);
 
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
@@ -96,10 +111,15 @@ export default function NewLeaguePage() {
       console.log("Success:", data);
       setLoading(false)
       router.push(`/leagues/${data.league?.slug}`)
-      
-    } catch (error: any) {
-      setLoading(false)
-      setErrors(error)
+
+    } catch (error: unknown) {
+      setLoading(false);
+
+      if (error instanceof Error) {
+        setErrors({ general: error.message });
+      } else {
+        setErrors({ general: 'An unknown error occurred' });
+      }
     }
   };
 

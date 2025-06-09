@@ -1,7 +1,5 @@
 'use client'
 
-import { useState } from "react";
-
 const allDays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
 
 type ScheduleConfigProps = {

@@ -1,0 +1,3 @@
+DATABASE_URL="mysql://bracket:bracket123@localhost:3306/bracket"
+NEXTAUTH_SECRET="2oNFGaT0X/AmwN3AO0ABsnSjPZd4c7L8t8a55iQgdN4="
+NEXTAUTH_URL=http://localhost:3000

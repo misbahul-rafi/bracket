@@ -1,0 +1,119 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  username  String   @unique @db.VarChar(255)
+  name      String
+  email     String   @unique
+  password  String
+  createdAt DateTime @default(now())
+
+  role    String
+  roleRel Role     @relation(fields: [role], references: [name])
+  League  League[]
+}
+
+model Role {
+  id   String @id @default(cuid())
+  name String @unique
+
+  users User[]
+}
+
+model Game {
+  id      String   @id @default(cuid())
+  name    String   @unique
+  slug    String   @unique
+  leagues League[]
+}
+
+enum LeagueFormat {
+  REGULAR
+  GROUP_STAGE
+}
+
+model League {
+  id               Int          @id @default(autoincrement())
+  name             String
+  code             String
+  slug             String       @unique
+  region           String
+  season           Int
+  format           LeagueFormat
+  userId           String
+  user             User         @relation(fields: [userId], references: [id])
+  groupMatchFormat MatchFormat  @default(BO3)
+  gameId           String
+  game             Game         @relation(fields: [gameId], references: [id])
+  groupIsLock      Boolean      @default(false)
+  groups           Group[]
+  matches          Match[]
+  createdAt        DateTime     @default(now())
+
+  @@unique([code, season])
+}
+
+model Team {
+  id           Int           @id @default(autoincrement())
+  name         String        @unique
+  code         String
+  region       String
+  matchesHome  Match[]       @relation("HomeTeam")
+  matchesAway  Match[]       @relation("AwayTeam")
+  groupMembers GroupMember[]
+}
+
+model Group {
+  id       Int           @id @default(autoincrement())
+  name     String
+  leagueId Int
+  league   League        @relation(fields: [leagueId], references: [id])
+  members  GroupMember[]
+
+  @@unique([name, leagueId])
+}
+
+model GroupMember {
+  id      Int   @id @default(autoincrement())
+  groupId Int
+  teamId  Int
+  group   Group @relation(fields: [groupId], references: [id])
+  team    Team  @relation(fields: [teamId], references: [id])
+
+  @@unique([groupId, teamId])
+}
+
+model Match {
+  id         Int         @id @default(autoincrement())
+  date       DateTime
+  leagueId   Int
+  league     League      @relation(fields: [leagueId], references: [id])
+  stage      String?
+  format     MatchFormat
+  homeScore  Int         @default(0)
+  awayScore  Int         @default(0)
+  homeTeamId Int
+  awayTeamId Int
+  homeTeam   Team        @relation("HomeTeam", fields: [homeTeamId], references: [id])
+  awayTeam   Team        @relation("AwayTeam", fields: [awayTeamId], references: [id])
+}
+
+enum MatchFormat {
+  BO1
+  BO3
+  BO5
+  BO7
+}

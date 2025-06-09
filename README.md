@@ -1,36 +1,72 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🏆 Bracket – Aplikasi Simulasi Liga & Jadwal Pertandingan Otomatis
 
-## Getting Started
+**Bracket** adalah aplikasi berbasis web yang memungkinkan pengguna untuk membuat, mengelola, dan menyimulasikan kompetisi liga olahraga atau esports dengan sistem pertandingan otomatis, klasemen dinamis, dan pengelompokan tim yang fleksibel.
 
-First, run the development server:
+## ✨ Fitur Utama
 
+- 🔐 **Autentikasi Pengguna** – Sistem login aman dengan NextAuth dan dukungan role (`admin`, `user`)
+- 🏟️ **Manajemen Liga** – Tambahkan liga lengkap dengan nama, musim, game, region, dan format
+- 👥 **Pengelompokan Tim** – Buat dan kelola grup dalam liga (Group Stage)
+- 📆 **Penjadwalan Otomatis** – Buat jadwal pertandingan antar tim secara otomatis
+- 📊 **Klasemen Dinamis** – Sistem klasemen yang terupdate otomatis dari hasil pertandingan
+- 🎮 **Multi Game Support** – Dukung berbagai jenis game (Mobile Legends, Dota, dsb.)
+- 🌙 **UI Modern & Dark Mode** – Antarmuka bersih, intuitif, dan responsif
+
+## 🧱 Teknologi yang Digunakan
+
+| Teknologi | Deskripsi |
+|----------|-----------|
+| [Next.js](https://nextjs.org/) | Framework React dengan App Router & SSR |
+| [Prisma](https://www.prisma.io/) | ORM modern untuk akses database |
+| [NextAuth.js](https://next-auth.js.org/) | Autentikasi fleksibel |
+| [MYSQL](https://www.mysql.com/) | Database relasional |
+| [Tailwind CSS](https://tailwindcss.com/) | Styling UI modern dan konsisten |
+
+## 🚀 Cara Menjalankan Proyek Ini
+
+### 1. Clone repositori
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone https://github.com/misbahul-rafi/bracket.git
+cd bracket
 ```
+### 2. Install dependencies
+```bash
+pnpm install
+```
+### 3. Setup environment variables
+Buat file .env dan isi variabel yang diperlukan:
+```bash
+DATABASE_URL=postgresql://user:password@localhost:5432/bracketdb
+NEXTAUTH_SECRET=your-secret-key
+NEXTAUTH_URL=http://localhost:3000
+```
+### 4. Setup database
+```bash
+pnpx prisma migrate dev --name init
+pnpx prisma db seed
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+```
+### 5. Jalankan server lokal
+```bash
+pnpm run dev
+```
+## 🧪 Struktur Folder
+```bash
+/app              # Struktur routing Next.js App Router
+/components       # Komponen UI (form, layout, dll.)
+/lib              # Konfigurasi Prisma, auth, dan utilitas lainnya
+/prisma           # Schema dan seed data
+/public           # Aset publik (favicon, gambar, logo)
+/styles           # File global CSS
+/utils            # Helper & utilitas (slugify, format, dll.)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```
+## 📸 Preview UI
+![Preview](/preview.png)
+## 🧑‍💻 Kontribusi
+Pull request dan issue sangat diterima! Jika kamu ingin menambahkan fitur atau memperbaiki bug, silakan fork repositori ini dan buat PR.
+## ⚖️ Lisensi
+This project is licensed under the [MIT License](./LICENSE).
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Bracket dibuat untuk membantu komunitas dalam mengelola turnamen dan liga dengan lebih efisien dan profesional. 💪
+---

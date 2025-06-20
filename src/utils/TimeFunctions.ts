@@ -72,3 +72,18 @@ export function timeIndonesia(isoString: Date, timeZone: string = 'Asia/Jakarta'
     timeZone
   });
 }
+
+export function formatDateToWIB(dateInput: Date | string): string {
+  const utcDate = new Date(dateInput)
+  const wibDate = new Date(utcDate.getTime() + 7 * 60 * 60 * 1000)
+
+  const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+  const dayName = days[wibDate.getUTCDay()]
+  const dd = String(wibDate.getUTCDate()).padStart(2, '0')
+  const mm = String(wibDate.getUTCMonth() + 1).padStart(2, '0')
+  const yy = String(wibDate.getUTCFullYear()).slice(-2)
+  const hh = String(wibDate.getUTCHours()).padStart(2, '0')
+  const min = String(wibDate.getUTCMinutes()).padStart(2, '0')
+
+  return `${dayName}, ${dd}-${mm}-${yy} ${hh}:${min}`
+}

@@ -3,12 +3,12 @@
 import CardLeague from "@/components/CardLeague";
 import TwitterSearch from "@/components/TwitterSearch";
 import { useEffect, useState } from "react";
-import { LeagueXGame } from "../../../types/struct";
+import { LeagueXEsport } from "../../../types/struct";
 import Link from "next/link";
 
 export default function LeaguesPage() {
   const [searchQuery, setSearchQuery] = useState<string>('')
-  const [leagues, setLeagues] = useState<LeagueXGame[] | null>(null)
+  const [leagues, setLeagues] = useState<LeagueXEsport[] | null>(null)
   useEffect(() => {
     (async () => {
       const res = await fetch('/api/leagues/')
@@ -21,7 +21,7 @@ export default function LeaguesPage() {
     setSearchQuery(value)
   }
   const filteredLeagues = leagues.filter((league) =>
-    `${league.name}${league.code}${league.slug}${league.region}${league.game.name}`
+    `${league.name}${league.code}${league.slug}${league.region}${league.esport.name}`
       .toLowerCase()
       .replace(/\s/g, '')
       .includes(searchQuery.toLowerCase().replace(/\s/g, ''))

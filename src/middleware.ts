@@ -4,17 +4,49 @@ import { getToken } from "next-auth/jwt";
 
 export async function middleware(req: NextRequest) {
   const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
+  const { pathname } = req.nextUrl;
 
-  const isAuth = !!token;
+  const protectedRoutes = [
+    '/leagues/new',
+    '/teams/new',
+    '/leagues/:slug/manage',
+    '/profiles'
+  ];
 
-  const protectedRoutes = ["/profiles"];
-  const isProtected = protectedRoutes.some((path) =>
-    req.nextUrl.pathname.startsWith(path)
-  );
+  const isProtectedRoute = protectedRoutes.some(route => {
+    const regex = new RegExp(`^${route.replace(':slug', '[^/]+')}(/.*)?$`);
+    return regex.test(pathname);
+  });
 
-  if (isProtected && !isAuth) {
-    const loginUrl = new URL("/signin", req.url);
-    return NextResponse.redirect(loginUrl);
+  if (isProtectedRoute && !token) {
+    const signInUrl = new URL('/signin', req.url);
+    signInUrl.searchParams.set('callbackUrl', req.url);
+    return NextResponse.redirect(signInUrl);
+  }
+
+  if (pathname.includes('/manage')) {
+    if (!token) {
+      const signInUrl = new URL('/signin', req.url);
+      signInUrl.searchParams.set('callbackUrl', req.url);
+      return NextResponse.redirect(signInUrl);
+    }
+
+    const slug = pathname.split('/')[2];
+    try {
+      const response = await fetch(`${process.env.NEXTAUTH_URL}/api/leagues/${slug}/verify-owner`, {
+        headers: {
+          // Forward semua cookie dari request awal ke internal API
+          cookie: req.headers.get("cookie") || ""
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error('Unauthorized');
+      }
+    } catch (error) {
+      console.log(error)
+      return NextResponse.redirect(new URL('/unauthorized', req.url));
+    }
   }
 
   return NextResponse.next();
@@ -23,7 +55,9 @@ export async function middleware(req: NextRequest) {
 export const config = {
   matcher: [
     '/profiles/:path*',
+    '/teams/new',
+    '/leagues/new',
     '/leagues/:slug/manage/:path*',
-    '/leagues/:slug/manage',
+    '/leagues/:slug/manage'
   ],
 };

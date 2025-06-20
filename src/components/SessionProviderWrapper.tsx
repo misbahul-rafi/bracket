@@ -2,6 +2,9 @@
 import { SessionProvider } from 'next-auth/react'
 import { usePathname } from 'next/navigation'
 import Navbar from './Navbar';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+
+const queryClient = new QueryClient()
 
 export function SessionProviderWrapper({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -11,8 +14,10 @@ export function SessionProviderWrapper({ children }: { children: React.ReactNode
   return (
     <>
       <SessionProvider>
-        {!shouldHideHeader && <Navbar />}
-        {children}
+        <QueryClientProvider client={queryClient}>
+          {!shouldHideHeader && <Navbar />}
+          {children}
+        </QueryClientProvider>
       </SessionProvider>
     </>
   )

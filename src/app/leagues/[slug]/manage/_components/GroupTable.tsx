@@ -1,13 +1,22 @@
 'use client';
 
-import { GroupXMembers } from "./GroupManage";
+import { Group, GroupMember, Team } from "@prisma/client";
+import ModalAddTeam from "@/components/ModalAddTeam";
+import { useState } from "react";
+
+interface GroupXMembers extends Group {
+  members: (GroupMember & {
+    team: Team;
+  })[];
+}
 
 interface Props {
   group: GroupXMembers;
   onGroupNameChange: (groupId: number, newName: string) => void;
   onMemberChange: (groupId: number, memberId: number, newTeamName: string) => void;
   validationResults: Record<number, "not-found" | "duplicate" | "valid">;
-  onDeleteGroup: (groupId: number) => void;
+  onDeleteGroup?: (groupId: number) => void;
+  fetchTeam?: ()=> void;
 }
 
 export default function GroupTable({
@@ -15,8 +24,10 @@ export default function GroupTable({
   onGroupNameChange,
   onMemberChange,
   validationResults,
-  onDeleteGroup
+  onDeleteGroup,
+  fetchTeam
 }: Props) {
+  const [modal, setModal] = useState(false)
   const isAllDummy = (group: GroupXMembers) =>
     group.members.every((member) =>
       member.team.id === 0 &&
@@ -26,7 +37,7 @@ export default function GroupTable({
       )
     );
 
-  const showDelete = isAllDummy(group);
+  const enableDelete = isAllDummy(group);
 
   const renderStatus = (memberId: number) => {
     const member = group.members.find(m => m.id === memberId);
@@ -44,7 +55,7 @@ export default function GroupTable({
 
     switch (status) {
       case "not-found":
-        return <span className="text-red-600 font-semibold">Not Found</span>;
+        return <span className="text-red-600 font-semibold" onClick={() => setModal(true)}>Not Found</span>;
       case "duplicate":
         return <span className="text-yellow-600 font-semibold">⚠️ Duplicate</span>;
       case "valid":
@@ -55,26 +66,27 @@ export default function GroupTable({
   };
 
   return (
-    <div className="border p-3 rounded shadow max-w-md w-full">
-      <div className="flex items-center justify-between mb-2">
-        <div className="flex gap-3 items-center">
+    <div className="w-60 text-xs">
+      <div className="flex items-center justify-between">
+        <div className="flex gap-3 items-center mb-2">
           <label htmlFor={`group-${group.id}`}>Group Name:</label>
           <input
-            className="border-b"
+            className="border-b w-20"
             type="text"
             id={`group-${group.id}`}
             value={group.name}
             onChange={(e) => onGroupNameChange(group.id, e.target.value)}
           />
         </div>
-        {showDelete && (
+        {onDeleteGroup && 
           <button
             onClick={() => onDeleteGroup(group.id)}
-            className="text-red-500 hover:underline"
+            className={`px-3 rounded-lg hover:underline ${enableDelete ? "bg-red-500 text-white" : "bg-gray-500 text-gray-300"}`}
+            disabled={!enableDelete}
           >
             Delete
           </button>
-        )}
+        }
       </div>
       <table className="w-full border border-collapse">
         <thead>
@@ -103,6 +115,7 @@ export default function GroupTable({
           ))}
         </tbody>
       </table>
+      {modal && <ModalAddTeam onSucces={fetchTeam} onClose={()=> setModal(false)} isFullPage={false}/>}
     </div>
   );
 }

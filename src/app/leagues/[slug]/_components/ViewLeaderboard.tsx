@@ -6,10 +6,37 @@ export default function ViewLeaderboard({ league }: { league: LeagueStruct }) {
   const leaderboardMap: Record<number, LeaderboardStruct> = {};
 
   // Siapkan entry leaderboard berdasarkan group members
-  league.groups.forEach((group) => {
-    group.members.forEach((member) => {
-      leaderboardMap[member.team.id] = {
-        team: member.team,
+  league.stage.forEach((s) => {
+    s.groups.forEach((group) => {
+      group.members.forEach((member) => {
+        leaderboardMap[member.team.id] = {
+          team: member.team,
+          matchPlayed: 0,
+          matchWon: 0,
+          matchLost: 0,
+          matchDiff: 0,
+          gameWon: 0,
+          gameLost: 0,
+          gameDiff: 0,
+        };
+      });
+    });
+  });
+
+
+  // Proses semua match
+  league.stage.forEach((s) => {
+    s.matches.forEach((match) => {
+      const homeId = match.homeTeam.id;
+      const awayId = match.awayTeam.id;
+      const homeScore = match.homeScore;
+      const awayScore = match.awayScore;
+
+      // Skip match tanpa skor
+      if (homeScore === 0 && awayScore === 0) return;
+
+      const homeEntry = leaderboardMap[homeId] ??= {
+        team: match.homeTeam,
         matchPlayed: 0,
         matchWon: 0,
         matchLost: 0,
@@ -18,58 +45,35 @@ export default function ViewLeaderboard({ league }: { league: LeagueStruct }) {
         gameLost: 0,
         gameDiff: 0,
       };
+
+      const awayEntry = leaderboardMap[awayId] ??= {
+        team: match.awayTeam,
+        matchPlayed: 0,
+        matchWon: 0,
+        matchLost: 0,
+        matchDiff: 0,
+        gameWon: 0,
+        gameLost: 0,
+        gameDiff: 0,
+      };
+
+      homeEntry.matchPlayed++;
+      awayEntry.matchPlayed++;
+
+      homeEntry.gameWon += homeScore;
+      homeEntry.gameLost += awayScore;
+
+      awayEntry.gameWon += awayScore;
+      awayEntry.gameLost += homeScore;
+
+      if (homeScore > awayScore) {
+        homeEntry.matchWon++;
+        awayEntry.matchLost++;
+      } else {
+        awayEntry.matchWon++;
+        homeEntry.matchLost++;
+      }
     });
-  });
-
-  // Proses semua match
-  league.matches.forEach((match) => {
-    const homeId = match.homeTeam.id;
-    const awayId = match.awayTeam.id;
-
-    const homeScore = match.homeScore;
-    const awayScore = match.awayScore;
-
-    // Jika skor belum diisi, skip
-    if (homeScore === 0 && awayScore === 0) return;
-
-    const homeEntry = leaderboardMap[homeId] ??= {
-      team: match.homeTeam,
-      matchPlayed: 0,
-      matchWon: 0,
-      matchLost: 0,
-      matchDiff: 0,
-      gameWon: 0,
-      gameLost: 0,
-      gameDiff: 0,
-    };
-
-    const awayEntry = leaderboardMap[awayId] ??= {
-      team: match.awayTeam,
-      matchPlayed: 0,
-      matchWon: 0,
-      matchLost: 0,
-      matchDiff: 0,
-      gameWon: 0,
-      gameLost: 0,
-      gameDiff: 0,
-    };
-
-    homeEntry.matchPlayed++;
-    awayEntry.matchPlayed++;
-
-    homeEntry.gameWon += homeScore;
-    homeEntry.gameLost += awayScore;
-
-    awayEntry.gameWon += awayScore;
-    awayEntry.gameLost += homeScore;
-
-    if (homeScore > awayScore) {
-      homeEntry.matchWon++;
-      awayEntry.matchLost++;
-    } else {
-      awayEntry.matchWon++;
-      homeEntry.matchLost++;
-    }
   });
 
   // Hitung diff

@@ -9,7 +9,6 @@ export default function Page() {
     signOut({ callbackUrl: '/' });
   };
 
-
   return (
     <main className="max-w-3xl mx-auto px-4 py-10">
       <section className="shadow-xl rounded-2xl p-6 flex flex-col sm:flex-row items-center justify-between gap-6">

@@ -7,7 +7,7 @@ import { NextRequest, NextResponse } from "next/server";
 export async function GET() {
   try {
     const league = await prisma.league.findMany({
-      include: { game: true }
+      include: { esport: true }
     })
     return NextResponse.json(league)
   } catch (error) {
@@ -15,33 +15,97 @@ export async function GET() {
     return NextResponse.json({ message: "internal server error" }, { status: 500 })
   }
 }
+
 export async function POST(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
-    if (!session || !session.user || !session.user.id) {
+
+    if (!session || !session.user?.id) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
 
-    const data = await request.json();
+    const body = await request.json();
+    const {
+      name,
+      code,
+      region,
+      season,
+      esportId,
+      groupIsLock,
+      format,
+      groupFormat,
+      playoffFormat,
+    } = body;
 
-    const insertData = await prisma.league.create({
+    const slug = slugify(`${code}-${season}`);
+
+    const newLeague = await prisma.league.create({
       data: {
-        name: data.name,
-        code: data.code,
+        name,
+        code,
+        region,
+        season: Number(season),
+        esportId: Number(esportId),
         userId: session.user.id,
-        season: Number(data.season),
-        region: data.region,
-        format: data.format,
-        groupMatchFormat: data.groupMatchFormat,
-        gameId: data.gameId,
-        slug: slugify(`${data.code}-${data.season}`)
-      }
+        groupIsLock: Boolean(groupIsLock),
+        slug,
+      },
     });
 
-    return NextResponse.json({ league: insertData }, { status: 201 });
+    if (format === "GROUP") {
+      await prisma.stage.create({
+        data: {
+          name: "Group Stage",
+          leagueId: newLeague.id,
+          format: groupFormat || "ROUND_ROBIN",
+          teamsPerGroup: 3,
+          order: 1,
+        },
+      });
 
+      if (playoffFormat) {
+        await prisma.stage.create({
+          data: {
+            name: "Playoff",
+            leagueId: newLeague.id,
+            format: playoffFormat,
+            teamsPerGroup: 3,
+            order: 2,
+          },
+        });
+      }
+    } else if (format === "KNOCKOUT") {
+      await prisma.stage.create({
+        data: {
+          name: "Knockout Stage",
+          leagueId: newLeague.id,
+          format: playoffFormat || "SINGLE_ELIMINATION",
+          order: 1,
+        },
+      });
+    } else if (format === "LADDER") {
+      await prisma.stage.create({
+        data: {
+          name: "Ladder",
+          leagueId: newLeague.id,
+          format: "LADDER",
+          order: 1,
+        },
+      });
+    }
+
+    return NextResponse.json(
+      {
+        league: {
+          id: newLeague.id,
+          name: newLeague.name,
+          slug: newLeague.slug,
+        },
+      },
+      { status: 201 }
+    );
   } catch (error) {
-    console.log(`⛔⛔⛔ Server Error ⛔⛔⛔\n${error}`);
-    return NextResponse.json({ message: "internal server error" }, { status: 500 });
+    console.error("⛔ Error creating league:", error);
+    return NextResponse.json({ message: "Internal Server Error" }, { status: 500 });
   }
 }

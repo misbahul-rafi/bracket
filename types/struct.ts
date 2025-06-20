@@ -1,19 +1,38 @@
-import { League, Game, Match, Team, Group, GroupMember } from "@prisma/client"
+import { League, Esport, Match, Team, Stage, Group, GroupMember } from "@prisma/client"
+
+
+export interface EsportXLeague extends Esport {
+  leagues: League[]
+}
 
 export interface LeagueStruct extends League {
-  game: Game
-  matches: (Match & {
-    homeTeam: Team
-    awayTeam: Team
-  })[]
+  esport: Esport;
+  stage: (Stage & {
+    groups: (Group & {
+      members: (GroupMember & {
+        team: Team;
+      })[];
+    })[];
+    matches: (Match & {
+      homeTeam: Team;
+      awayTeam: Team;
+    })[];
+  })[];
+}
+export interface StageStruct extends Stage {
   groups: (Group & {
     members: (GroupMember & {
-      team: Team
-    })[]
-  })[]
+      team: Team;
+    })[];
+  })[];
+  matches: (Match & {
+    homeTeam: Team;
+    awayTeam: Team;
+  })[];
 }
-export interface LeagueXGame extends League {
-  game: Game
+
+export interface LeagueXEsport extends League {
+  esport: Esport
 }
 export interface LeaderboardStruct {
   team: Team;
@@ -35,7 +54,7 @@ export interface GroupXMembers extends Group {
   })[];
 }
 
-export interface ScheduleStruct{
+export interface ScheduleStruct {
   startDate: String;
   days: string[];
   timesPerDay: { [day: string]: string[] };

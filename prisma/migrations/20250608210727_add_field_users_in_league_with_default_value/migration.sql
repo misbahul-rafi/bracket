@@ -1,5 +1,0 @@
--- AlterTable
-ALTER TABLE `League` ADD COLUMN `userId` VARCHAR(191) NOT NULL DEFAULT 'cmbo5b9li0003yvio71jmgy0i';
-
--- AddForeignKey
-ALTER TABLE `League` ADD CONSTRAINT `League_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;

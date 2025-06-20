@@ -1,2 +1,0 @@
--- AlterTable
-ALTER TABLE `League` ALTER COLUMN `userId` DROP DEFAULT;

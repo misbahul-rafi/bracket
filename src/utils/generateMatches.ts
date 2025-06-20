@@ -1,7 +1,6 @@
-import { LeagueStruct, MatchStruct, ScheduleStruct } from "../../types/struct";
+import { MatchStruct, ScheduleStruct, StageStruct } from "../../types/struct";
 
 function getNextValidDate(start: Date, allowedDays: string[]): Date {
-  // @typescript-eslint/no-unused-vars
   const date = new Date(start);
   while (true) {
     const dayName = date.toLocaleDateString("en-US", { weekday: "long" });
@@ -12,16 +11,14 @@ function getNextValidDate(start: Date, allowedDays: string[]): Date {
   return date;
 }
 
-export default function generateMataches(
-  league: LeagueStruct,
+export default function generateMatches(
+  stage: StageStruct,
   schedule: ScheduleStruct
 ): MatchStruct[] {
   const generated: MatchStruct[] = [];
-  
-
   const groupMatchQueue: { [groupId: number]: MatchStruct[] } = {};
 
-  for (const group of league.groups) {
+  for (const group of stage.groups) {
     const members = [...group.members];
     if (members.length % 2 !== 0) {
       members.push({
@@ -33,6 +30,7 @@ export default function generateMataches(
           name: "BYE",
           code: "BYE",
           region: "N/A",
+          userId: ''
         },
       });
     }
@@ -52,15 +50,16 @@ export default function generateMataches(
         roundMatches.push({
           id: 0,
           date: new Date(),
-          leagueId: league.id,
-          stage: "group_stage",
-          format: league.groupMatchFormat,
+          stageId: stage.id,
+          format: "BO3",
           homeScore: 0,
           awayScore: 0,
           homeTeamId: fixed.teamId,
           awayTeamId: opponent.teamId,
           homeTeam: fixed.team,
           awayTeam: opponent.team,
+          bracket: null,
+          matchCode: null
         });
       }
 
@@ -71,15 +70,16 @@ export default function generateMataches(
           roundMatches.push({
             id: 0,
             date: new Date(),
-            leagueId: league.id,
-            stage: "group_stage",
-            format: league.groupMatchFormat,
+            stageId: stage.id,
+            format: "BO3",
             homeScore: 0,
             awayScore: 0,
             homeTeamId: teamA.teamId,
             awayTeamId: teamB.teamId,
             homeTeam: teamA.team,
             awayTeam: teamB.team,
+            bracket: null,
+            matchCode: null
           });
         }
       }
@@ -103,7 +103,7 @@ export default function generateMataches(
 
     const timeSlots = schedule.timesPerDay[dayName] || [];
     for (const timeStr of timeSlots) {
-      for (const group of league.groups) {
+      for (const group of stage.groups) {
         const nextMatch = groupMatchQueue[group.id]?.shift();
         if (!nextMatch) continue;
 

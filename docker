@@ -1,0 +1,17 @@
+docker run -d \
+  --name bracket-db \
+  -e MYSQL_ROOT_PASSWORD=myname \
+  -e MYSQL_DATABASE=bracket \
+  -e MYSQL_USER=user \
+  -e MYSQL_PASSWORD=bracket123 \
+  -p 3306:3306 \
+  --restart always \
+  mysql:8.0
+
+CREATE USER 'user'@'localhost' IDENTIFIED BY 'bracket123';
+CREATE USER 'user'@'%' IDENTIFIED BY 'bracket123';
+
+GRANT ALL PRIVILEGES ON bracket.* TO 'user'@'localhost';
+GRANT ALL PRIVILEGES ON bracket.* TO 'user'@'%';
+
+FLUSH PRIVILEGES;

@@ -3,3 +3,15 @@
 main{
   margin-top: 58px;
 }
+:root {
+  --primary-red: #de1e14;
+  --hover-red: #ff0000;
+}
+
+.navbar {
+  background-color: var(--primary-red);
+}
+
+.hover-item:hover {
+  background-color: var(--hover-red);
+}

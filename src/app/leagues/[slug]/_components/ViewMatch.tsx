@@ -7,7 +7,6 @@ import MatchCard from "./MatchCard";
 type Props = {
   data: MatchStruct[],
   onScoreChange: (id: number, homeScore: number, awayScore: number) => void;
-  // onReset: () => void;
 }
 
 export default function ViewMatch({ data, onScoreChange }: Props) {
@@ -16,12 +15,9 @@ export default function ViewMatch({ data, onScoreChange }: Props) {
   const { pastWeeks, upcomingWeeks } = weeklyGroup(data)
 
   return (
-    <div className="flex flex-col md:flex-row">
-
+    <div className="flex flex-col md:flex-row gap-3">
       <section className="bg-white p-4 md:w-1/2 rounded-md shadow-md md:order-2">
-        <div className="flex flex-row justify-between pr-12">
-          <h2 className="text-xl font-semibold mb-4">Upcoming Matches</h2>
-        </div>
+        <h2 className="text-lg font-semibold mb-4">Upcoming Matches</h2>
         {upcomingWeeks.length === 0 ? (
           <p className="text-gray-500">No upcoming matches.</p>
         ) : (
@@ -35,7 +31,7 @@ export default function ViewMatch({ data, onScoreChange }: Props) {
         )}
       </section>
 
-      <section className="bg-white md:w-1/2 rounded-md shadow-md md:order-1 overflow-x-auto">
+      <section className="bg-white p-4 md:w-1/2 rounded-md shadow-md md:order-2">
         <h2 className="text-xl font-semibold mb-4">Completed Matches</h2>
         {pastWeeks.length === 0 ? (
           <p className="text-gray-500">No past matches.</p>

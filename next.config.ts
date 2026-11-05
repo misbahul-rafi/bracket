@@ -5,6 +5,11 @@ const nextConfig: NextConfig = {
   images: {
     domains: ['images.unsplash.com'],
   },
+  serverExternalPackages: [
+    '@libsql/client',
+    '@prisma/adapter-libsql',
+    '@prisma/client',
+  ],
 };
 
 export default nextConfig;

@@ -1,7 +1,13 @@
 const { PrismaClient } = require('@prisma/client');
+const { PrismaLibSQL } = require('@prisma/adapter-libsql');
 const { hash } = require('bcrypt');
 
-const prisma = new PrismaClient();
+const adapter = new PrismaLibSQL({
+  url: process.env.TURSO_DATABASE_URL,
+  authToken: process.env.TURSO_AUTH_TOKEN,
+});
+
+const prisma = new PrismaClient({ adapter });
 
 async function main() {
   const roles = ['admin', 'user'];

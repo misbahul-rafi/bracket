@@ -1,2 +1,0 @@
--- AlterTable
-ALTER TABLE `Stage` ADD COLUMN `teamsPerGroup` INTEGER NOT NULL DEFAULT 3;

@@ -20,8 +20,6 @@ const MAX_MEMBERS_IN_GROUP = 16;
 type ValidationStatus = "not-found" | "duplicate" | "valid";
 
 export default function ManageGroup({ stage, leagueSlug, fetching }: { stage: StageStruct, leagueSlug: string, fetching: () => void }) {
-  if (stage.isLocked) return <GroupDetail stage={stage} />
-
   const [groups, setGroups] = useState<GroupXMembers[]>(() => {
     if (stage.name !== "Group Stage" && stage.groups.length === 0) {
       const newGroupId = Date.now();
@@ -48,7 +46,7 @@ export default function ManageGroup({ stage, leagueSlug, fetching }: { stage: St
   });
 
   const [minMemberInGroup, setMinMemberInGroup] = useState(3);
-  const [membersInGroup, setMembersInGroup] = useState<number>(minMemberInGroup)
+  const [membersInGroup, setMembersInGroup] = useState<number>(3)
   const { data: allTeams = [], isLoading, refetch } = useTeams()
   const [validationResults, setValidationResults] = useState<Record<number, ValidationStatus>>({});
   const [isAllValid, setIsAllValid] = useState(false);
@@ -295,67 +293,73 @@ export default function ManageGroup({ stage, leagueSlug, fetching }: { stage: St
     return fetching();
   }
   return (
-    <section className="flex-2 border rounded-lg p-5">
-      <header className="flex justify-between items-center border-b pb-2 text-xs">
-        <h1 className="">Manage {stage.name}</h1>
-        <div className="flex gap-3 items-center">
-          <label htmlFor="teamsInGroup">Teams/Group :</label>
-          <input
-            type="number"
-            name="teamsInGroup"
-            id="teamsInGroup"
-            max={MAX_MEMBERS_IN_GROUP}
-            min={minMemberInGroup}
-            value={membersInGroup}
-            onChange={handleMemberInGroupChange}
-            className="border w-20 text-center rounded-lg"
-          />
-          <div className="flex gap-3">
-            {stage.name === "Group Stage" &&
-              <button onClick={handleAddGroup} className="border px-2 py-1 rounded">
-                Add Group
-              </button>
-            }
-            <button
-              onClick={handleSave}
-              className="border px-2 py-1 rounded disabled:opacity-50"
-              disabled={!isAllValid || isPending}
+    <>
+      {stage.isLocked ? (
+        <GroupDetail stage={stage} />
+      ) : (
+        <section className="flex-2 border rounded-lg p-5">
+          <header className="flex justify-between items-center border-b pb-2 text-xs">
+            <h1 className="">Manage {stage.name}</h1>
+            <div className="flex gap-3 items-center">
+              <label htmlFor="teamsInGroup">Teams/Group :</label>
+              <input
+                type="number"
+                name="teamsInGroup"
+                id="teamsInGroup"
+                max={MAX_MEMBERS_IN_GROUP}
+                min={minMemberInGroup}
+                value={membersInGroup}
+                onChange={handleMemberInGroupChange}
+                className="border w-20 text-center rounded-lg"
+              />
+              <div className="flex gap-3">
+                {stage.name === "Group Stage" &&
+                  <button onClick={handleAddGroup} className="border px-2 py-1 rounded">
+                    Add Group
+                  </button>
+                }
+                <button
+                  onClick={handleSave}
+                  className="border px-2 py-1 rounded disabled:opacity-50"
+                  disabled={!isAllValid || isPending}
 
-            >
-              Save
-            </button>
-            <button
-              onClick={(handleLock)}
-              className="border px-2 py-1 rounded disabled:opacity-50"
-              disabled={!isAllValid || isPending}
+                >
+                  Save
+                </button>
+                <button
+                  onClick={(handleLock)}
+                  className="border px-2 py-1 rounded disabled:opacity-50"
+                  disabled={!isAllValid || isPending}
 
-            >
-              Lock Group
-            </button>
-          </div>
-        </div>
-      </header>
-      <div className="">
-        <div className="flex gap-5 flex-wrap h-full mt-5 flex-row p-3 justify-start">
-          {isLoading ? <Spinner /> : groups.map((group, index) => (
-            <GroupTable
-              key={group.id ?? index}
-              group={group}
-              onGroupNameChange={handleGroupNameChange}
-              onMemberChange={handleMemberChange}
-              validationResults={validationResults}
-              fetchTeam={refetch}
-              {...(stage.name === "Group Stage" && {
-                onDeleteGroup: handleDeleteGroup,
-              })}
+                >
+                  Lock Group
+                </button>
+              </div>
+            </div>
+          </header>
+          <div className="">
+            <div className="flex gap-5 flex-wrap h-full mt-5 flex-row p-3 justify-start">
+              {isLoading ? <Spinner /> : groups.map((group, index) => (
+                <GroupTable
+                  key={group.id ?? index}
+                  group={group}
+                  onGroupNameChange={handleGroupNameChange}
+                  onMemberChange={handleMemberChange}
+                  validationResults={validationResults}
+                  fetchTeam={refetch}
+                  {...(stage.name === "Group Stage" && {
+                    onDeleteGroup: handleDeleteGroup,
+                  })}
+                />
+              ))}
+            </div>
+            <KCFromGroup
+              groupStage={stage}
             />
-          ))}
-        </div>
-        <KCFromGroup
-          groupStage={stage}
-        />
 
-      </div>
-    </section>
+          </div>
+        </section>
+      )}
+    </>
   );
 }

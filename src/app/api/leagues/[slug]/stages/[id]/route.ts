@@ -1,5 +1,6 @@
 import { Prisma } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
+import { prisma } from "@/lib/prisma";
 
 type UpdatePayload = {
   isLock?: boolean
@@ -7,9 +8,10 @@ type UpdatePayload = {
 }
 export async function PATCH(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
-  const stageId = params.id
+  const { id: stageIdStr } = await params;
+  const stageId = parseInt(stageIdStr, 10);
   const body = await req.json()
   const allowedFields: (keyof UpdatePayload)[] = ['isLock', 'teamsPerGroup']
   const dataToUpdate: Partial<UpdatePayload> = {}

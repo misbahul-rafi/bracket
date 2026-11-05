@@ -46,10 +46,10 @@ export async function GET(
 }
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: { slug: string } }
+  { params }: { params: Promise<{ slug: string }> }
 ) {
   try {
-    const { slug } = params;
+    const { slug } = await params;
 
     const league = await prisma.league.findUnique({
       where: { slug },

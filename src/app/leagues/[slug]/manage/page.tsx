@@ -5,22 +5,17 @@ import MatchManage from "./_components/tabs/ManageMatch";
 import { useLeague } from "@/hooks/leagues";
 import Spinner from "@/components/Spinner";
 import LeagueTab from "./_components/LeagueTab";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Detail from "./_components/tabs/Detail";
 import ManageGroup from "./_components/tabs/ManageGroup";
-import KCFromGroup from "./_components/tabs/KCFromGroup";
 
 export default function ManageLeague() {
   const { slug } = useParams<{ slug: string }>();
   const [tab, setTab] = useState("detail")
   const {
     data: league,
-    isLoading,
     refetch: refetchLeague
   } = useLeague(slug);
-  useEffect(() => {
-    console.log(tab)
-  }, [tab])
 
   return (
     <main className="mx-auto px-4">

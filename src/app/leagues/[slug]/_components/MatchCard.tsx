@@ -20,7 +20,7 @@ export default function MatchCard({ match, onScoreChange }: { match: MatchStruct
     if (match) {
       onScoreChange(match.id, homeScore, awayScore);
     }
-  }, [homeScore, awayScore]);
+  }, [homeScore, awayScore, match, onScoreChange]);
 
   const handleHomeScoreChange = (value: number) => setHomeScore(value);
   const handleAwayScoreChange = (value: number) => setAwayScore(value);

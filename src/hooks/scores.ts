@@ -10,7 +10,7 @@ export function useUpdateScore(slug: string) {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (matchesPayload: UpdateScorePayload) => {
+    mutationFn: async (matchesPayload: UpdateScorePayload[]) => {
       const res = await fetch(`/api/leagues/matches/`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

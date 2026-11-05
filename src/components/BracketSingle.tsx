@@ -49,10 +49,11 @@ const generateMatches = (backendMatches: MatchStruct[]): Match[] => {
 
 export default function BracketSingle({ data }: { data: MatchStruct[] }) {
   const matches = generateMatches(data || [])
+  const [scores, setScores] = useState<Record<number, { home: number; away: number }>>({})
+
   if (matches.length === 0) {
     return <p className="text-sm text-gray-500">Belum ada match yang tersedia.</p>
   }
-  const [scores, setScores] = useState<Record<number, { home: number; away: number }>>({})
 
   const handleScoreChange = (id: number, side: 'home' | 'away', value: number) => {
     setScores(prev => ({

@@ -103,7 +103,7 @@ export function useDeleteLeague(onSuccessCallback?: () => void) {
         onSuccessCallback()
       }
     },
-    onError: (err: any) => {
+    onError: (err: Error) => {
       console.error(err.message || "Terjadi kesalahan saat menghapus.")
     },
   })
